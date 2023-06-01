@@ -24,7 +24,7 @@ function inicializar (numeroPagina){
         }
     
         http.open("GET", `https://dummyapi.io/data/v1/user?limit=${numUser}&page=${numeroPagina}`,true); // pedir a la appi la info.
-        http.setRequestHeader("app-id","6473b103c2086a18c9d4914a"); // establecer la conexion 
+        http.setRequestHeader("app-id","64776f75ffbfef6cb221175a"); // establecer la conexion 
         http.send(); //envia la solicitud 
 
 };
@@ -32,14 +32,14 @@ function inicializar (numeroPagina){
 function ListaEntradas(responseText){
     console.log(responseText);
     let usuarios = JSON.parse(responseText);
-    const divListado = document.getElementById("listado");
-    const divConteo = document.getElementById("conteo-paginas");
-    
+    const divListado = document.getElementById("listado");  
+    let divConteo = document.getElementById("user");
 
-    divListado.innerHTML = '<li><h4>Foto, Título, Nombre, Apellidos</h4></li>';
+    divListado.innerHTML = "";
     for(const item of usuarios.data){
-        divListado.innerHTML += "<li><a href='ejercicicoa2.html?id=" + item.id + "'>" + "<img width='130' height='90'" + "src='" + item.picture +"'/></a>'" + item.title +","+ item.firstName + ", "+ item.lastName + "</li>";
+        divListado.innerHTML += `<li><a href="ejercicicoa2.html?id=${item.id}"><img src="${item.picture}" width="100"></a> ${item.title} ${item.firstName} ${item.lastName}</li>`;
     }
+    divListado.innerHTML += "</ul>";
 
     divConteo.innerHTML="";
     for(let i = 1; i <= usuarios.total/numUser; i++){
@@ -52,45 +52,40 @@ function error(textoError){
         divListado.innerHTML = textoError;
 };
 
-function init(){
+function usuario(){
     
-    let http = new XMLHttpRequest();
-    const idUsuario = new URLSearchParams(window.location.search).get("id");
-    const divDespliegue = document.getElementById("despliegue");
-    
+    let userId = new URLSearchParams(window.location.search).get("id");
+    let userDiv = document.getElementById("user");
+    let xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+        console.log(this.responseText);
+        let usuarios = JSON.parse(this.responseText);
 
-    http.onreadystatechange = function() {
-        if(this.readyState == 4 && this.status == 200){
-            let usuario = JSON.parse(this.responseText);
-            console.log(usuario);
-    
-    divDespliegue.innerHTML = `<p>
-        <img src="${usuario.picture}">
-    </p>
-    <p>
-    <b>ID:</b> ${usuario.id}<br/>
-    <b>${usuario.title}. ${usuario.firstName} ${usuario.lastName}</b><br/>
-    <b>Gender:</b> ${usuario.gender}<br/>
-    <b>Date of Birth:</b> ${usuario.dateOfBirth}<br/>
-    <b>Register Date:</b> ${usuario.registerDate}<br/>
-</p>
-<p>
-    <b>Email:</b> ${usuario.email}<br/>
-    <b>Phone:</b> ${usuario.phone}</br>
-</p>
-<p>
-    <b>Address</b></br>
-    <b>State:</b> ${usuario.location.state}<br/>
-    <b>Street:</b> ${usuario.location.street}<br/>
-    <b>City:</b> ${usuario.location.city}</br>
-    <b>Country:</b> ${usuario.location.country}<br/>
-    <b>Timezone:</b> ${usuario.location.timezone}<br/>
-</p>`
-}
-};
-        http.open("GET", `https://dummyapi.io/data/v1/user/${idUsuario}`,true);
-        http.setRequestHeader("app-id","6473b103c2086a18c9d4914a");  
-        http.send();       
+        userDiv.innerHTML = 
+        `<img src="${usuarios.picture}" width="200"/> <br/>
+        <b>ID</b> ${usuarios.id} <br/>
+        <b>Title:</b> ${usuarios.title}<br/>
+        <b>First Name:</b> ${usuarios.firstName} <br/>
+        <b>Last Name:</b> ${usuarios.lastName} <br/>
+        <b>Gender: </b> ${usuarios.gender} <br/>
+        <b>Email:</b> ${usuarios.email} <br/>
+        <b>Date of Birth:</b> ${usuarios.dateOfBirth} <br/>
+        <b>Phone:</b> ${usuarios.phone} <br/>
+        <b>Location:</b><br/>
+        <b>City:</b> ${usuarios.location.city} <br/>
+        <b>Street:</b> ${usuarios.location.street} <br/>
+        <b>Counrty:</b> ${usuarios.location.country} <br/>
+        <b>State:</b> ${usuarios.location.state} <br/>
+        <b>Register Date:</b> ${usuarios.registerDate} <br/>
+        <b>Time Zone:</b> ${usuarios.location.timezone} <br/>
+        <b>Update Date:</b> ${usuarios.updatedDate}`
+    }
+    };
+    let url = `https://dummyapi.io/data/v1/user/${userId}`;
+    xhr.open("GET", url, true);
+    xhr.setRequestHeader("app-id", "64762ccc042da10aab777784");
+    xhr.send();
 };
 
 
